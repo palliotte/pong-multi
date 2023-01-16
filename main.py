@@ -1,21 +1,36 @@
-class player:
-    def __init__(self, ab):
-        self.sprite = game.create_sprite(ab,4)
-        self.sprite.set(LedSpriteProperty.BRIGHTNESS, 50)
-    def move(self, move):
-        self.sprite.change(LedSpriteProperty.X, move)
-
-padletA = player(2)
-padletB = player(3)
+padletA = game.create_sprite(2,4)
+padletA.set(LedSpriteProperty.BRIGHTNESS, 50)
+padletB = game.create_sprite(3,4)
+padletB.set(LedSpriteProperty.BRIGHTNESS, 50)
+game.set_life(10)
+score = 0
 
 def on_button_pressed_a():
-    if padletA.sprite.get(LedSpriteProperty.X) > 0:
-        padletA.move(-1)
-        padletB.move(-1)
+    if padletA.get(LedSpriteProperty.X) > 0:
+        padletA.change(LedSpriteProperty.X, -1)
+        padletB.change(LedSpriteProperty.X, -1)
+        radio.send_value("x", padletA.get(LedSpriteProperty.X))
 input.on_button_pressed(Button.A, on_button_pressed_a)
 
 def on_button_pressed_b():
-    if padletB.sprite.get(LedSpriteProperty.X) < 4:
-        padletA.move(1)
-        padletB.move(1)
+    if padletB.get(LedSpriteProperty.X) < 4:
+        padletA.change(LedSpriteProperty.X, 1)
+        padletB.change(LedSpriteProperty.X, 1)
+        radio.send_value("x", padletA.get(LedSpriteProperty.X))
 input.on_button_pressed(Button.B, on_button_pressed_b)
+
+def onEvery_interval():
+    radio.send_value("x", padletA.get(LedSpriteProperty.X))
+    score =+ 1
+loops.every_interval(1000, onEvery_interval)
+
+def on_received_value(name, value):
+    if not ennemieA:
+        ennemieA = game.create_sprite(2, 0)
+        ennemieA.set(LedSpriteProperty.BRIGHTNESS, 60)
+        ennemieB = game.create_sprite(3, 0)
+        ennemieB.set(LedSpriteProperty.BRIGHTNESS, 60)
+    if name == "x":
+        ennemieA.set(LedSpriteProperty.X, value)
+        ennemieB.set(LedSpriteProperty.X, 1+value)
+radio.on_received_value(on_received_value)
