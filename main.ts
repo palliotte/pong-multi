@@ -1,9 +1,3 @@
-let padletA = game.createSprite(2, 4)
-padletA.set(LedSpriteProperty.Brightness, 50)
-let padletB = game.createSprite(3, 4)
-padletB.set(LedSpriteProperty.Brightness, 50)
-game.setLife(10)
-let score = 0
 input.onButtonPressed(Button.A, function on_button_pressed_a() {
     if (padletA.get(LedSpriteProperty.X) > 0) {
         padletA.change(LedSpriteProperty.X, -1)
@@ -20,13 +14,8 @@ input.onButtonPressed(Button.B, function on_button_pressed_b() {
     }
     
 })
-loops.everyInterval(1000, function onEvery_interval() {
-    radio.sendValue("x", padletA.get(LedSpriteProperty.X))
-    let score = +1
-})
 radio.onReceivedValue(function on_received_value(name: string, value: number) {
-    let ennemieA: game.LedSprite;
-    let ennemieB: game.LedSprite;
+    
     if (!ennemieA) {
         ennemieA = game.createSprite(2, 0)
         ennemieA.set(LedSpriteProperty.Brightness, 60)
@@ -39,4 +28,19 @@ radio.onReceivedValue(function on_received_value(name: string, value: number) {
         ennemieB.set(LedSpriteProperty.X, 1 + value)
     }
     
+})
+let ennemieB : game.LedSprite = null
+let ennemieA : game.LedSprite = null
+let padletB : game.LedSprite = null
+let padletA : game.LedSprite = null
+let score = 0
+padletA = game.createSprite(2, 4)
+padletA.set(LedSpriteProperty.Brightness, 50)
+padletB = game.createSprite(3, 4)
+padletB.set(LedSpriteProperty.Brightness, 50)
+game.setLife(10)
+loops.everyInterval(1000, function on_every_interval() {
+    
+    radio.sendValue("x", padletA.get(LedSpriteProperty.X))
+    score += 1
 })

@@ -1,10 +1,3 @@
-padletA = game.create_sprite(2,4)
-padletA.set(LedSpriteProperty.BRIGHTNESS, 50)
-padletB = game.create_sprite(3,4)
-padletB.set(LedSpriteProperty.BRIGHTNESS, 50)
-game.set_life(10)
-score = 0
-
 def on_button_pressed_a():
     if padletA.get(LedSpriteProperty.X) > 0:
         padletA.change(LedSpriteProperty.X, -1)
@@ -19,18 +12,31 @@ def on_button_pressed_b():
         radio.send_value("x", padletA.get(LedSpriteProperty.X))
 input.on_button_pressed(Button.B, on_button_pressed_b)
 
-def onEvery_interval():
-    radio.send_value("x", padletA.get(LedSpriteProperty.X))
-    score =+ 1
-loops.every_interval(1000, onEvery_interval)
-
 def on_received_value(name, value):
-    if not ennemieA:
+    global ennemieA, ennemieB
+    if not (ennemieA):
         ennemieA = game.create_sprite(2, 0)
         ennemieA.set(LedSpriteProperty.BRIGHTNESS, 60)
         ennemieB = game.create_sprite(3, 0)
         ennemieB.set(LedSpriteProperty.BRIGHTNESS, 60)
     if name == "x":
         ennemieA.set(LedSpriteProperty.X, value)
-        ennemieB.set(LedSpriteProperty.X, 1+value)
+        ennemieB.set(LedSpriteProperty.X, 1 + value)
 radio.on_received_value(on_received_value)
+
+ennemieB: game.LedSprite = None
+ennemieA: game.LedSprite = None
+padletB: game.LedSprite = None
+padletA: game.LedSprite = None
+score = 0
+padletA = game.create_sprite(2, 4)
+padletA.set(LedSpriteProperty.BRIGHTNESS, 50)
+padletB = game.create_sprite(3, 4)
+padletB.set(LedSpriteProperty.BRIGHTNESS, 50)
+game.set_life(10)
+
+def on_every_interval():
+    global score
+    radio.send_value("x", padletA.get(LedSpriteProperty.X))
+    score += 1
+loops.every_interval(1000, on_every_interval)
